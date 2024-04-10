@@ -3,6 +3,9 @@ import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useUserContext } from '../common/UserProvider';
 import ApplicantAPIService,{ apiUrl } from '../../services/ApplicantAPIService';
+import { useNavigate } from 'react-router-dom';
+
+
 const ApplicantDashboard = () => 
 {
   const [token, setToken] = useState('');
@@ -11,6 +14,8 @@ const ApplicantDashboard = () =>
   const [contRecJobs, setCountRecJobs] = useState(0);
   const [contAppliedJob, setAppliedJobs] = useState(0);
   const [contSavedJobs, setSavedJobs] = useState(0);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
     if (storedToken) {
@@ -71,6 +76,20 @@ const ApplicantDashboard = () =>
               console.error('Error fetching team members:', error);
           });
   }, [user.id]);
+
+  const handleRecommendedJobsClick = () => {
+    navigate('/applicant-find-jobs'); // Replace '/recommended-jobs' with the actual URL path for recommended jobs page
+  };
+  
+  const handleAppliedJobsClick = () => {
+    navigate('/applicant-applied-jobs'); // Replace '/applied-jobs' with the actual URL path for applied jobs page
+  };
+  
+  const handleSavedJobsClick = () => {
+    navigate('/applicant-saved-jobs'); // Replace '/saved-jobs' with the actual URL path for saved jobs page
+  };
+  
+  
   return (
     <div>
     {loading ? null : (
@@ -91,7 +110,7 @@ const ApplicantDashboard = () =>
     <div className="row">
       <div className="col-lg-12 col-md-12 ">
         <div className="wrap-icon widget-counter">
-          <div className="box-icon wrap-counter flex">
+          <div className="box-icon wrap-counter flex" onClick={handleRecommendedJobsClick}>
             <div className="icon style1">
               <span className="icon-bag">
                 <svg
@@ -122,7 +141,7 @@ const ApplicantDashboard = () =>
               <h4 className="title-count">Recommended Jobs</h4>
             </div>
           </div>
-          <div className="box-icon wrap-counter flex">
+          <div className="box-icon wrap-counter flex"  onClick={handleAppliedJobsClick} >
             <div className="icon style2">
               <span className="icon-bag">
                 <svg
@@ -160,7 +179,7 @@ const ApplicantDashboard = () =>
               <h4 className="title-count">Applied Jobs</h4>
             </div>
           </div>
-          <div className="box-icon wrap-counter flex">
+          <div className="box-icon wrap-counter flex" onClick={handleSavedJobsClick}>
             <div className="icon style4">
               <span className="icon-bag">
                 <svg

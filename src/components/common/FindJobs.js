@@ -43,7 +43,7 @@ const Nav = () => {
   return (
     <div>
   <>
-  <a id="scroll-top" />
+  <a href ='/' id="scroll-top" />
 
   {/* <div className="menu-mobile-popup">
     <div className="modal-menu__backdrop" />

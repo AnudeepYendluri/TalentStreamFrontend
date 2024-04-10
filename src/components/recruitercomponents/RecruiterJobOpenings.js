@@ -28,7 +28,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
     };
   }, []);
 
-  
+  /*
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -82,6 +82,85 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
     fetchJobs();
   }, [user.id]);  
   
+  */
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const fetchJobs = async () => {
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      if (jwtToken) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+      }
+
+      const localJobs = JSON.parse(localStorage.getItem('jobs')) || [];
+
+      if (localJobs.length > 0) {
+        const updatedJobs = await Promise.all(
+          localJobs.map(async (job) => {
+            const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${job.id}`);
+            const status = statusResponse.data;
+            return { ...job, status };
+          })
+        );
+
+        // Sort job postings by creation date (newest first)
+        const sortedJobs = updatedJobs.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+
+        setJobs(sortedJobs);
+        setLoading(false);
+      } else {
+        const apiUrlForJobs = `${apiUrl}/job/recruiters/viewJobs/${user.id}`;
+        const jobsResponse = await axios.get(apiUrlForJobs);
+        const jobsData = jobsResponse.data;
+
+        const updatedJobs = await Promise.all(
+          jobsData.map(async (job) => {
+            const statusResponse = await axios.get(`${apiUrl}/job/getStatus/${job.id}`);
+            const status = statusResponse.data;
+            return { ...job, status };
+          })
+        );
+
+        // Sort job postings by creation date (newest first)
+        const sortedJobs = updatedJobs.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+
+        localStorage.setItem('jobs', JSON.stringify(sortedJobs));
+
+        setJobs(sortedJobs);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Error fetching job details:', error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchJobs();
+  }, [user.id]);
 
   /*
   const handleFilter = (status) => {
@@ -99,7 +178,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
     }
   });  */
 
-  
+  /*
   const handleFilter = async (status) => {
     setLoading(true);
     try {
@@ -124,11 +203,35 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
       setLoading(false);
     }
   };
-  
+  */
  
+  const handleFilter = async (status) => {
+    setLoading(true);
+    try {
+      const jwtToken = localStorage.getItem('jwtToken');
+      if (jwtToken) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+      }
   
+      let apiUrlForStatus;
+      if (status === 'All') {
+        apiUrlForStatus = `${apiUrl}/job/recruiters/viewJobs/${user.id}`;
+      } else {
+        apiUrlForStatus = `http://localhost:8081/job/${status}`;
+      }
   
-  
+      const response = await axios.get(apiUrlForStatus);
+      const filteredJobs = response.data;
+      const sortedJobs = filteredJobs.sort((a, b) => new Date(b.creationDate) - new Date(a.creationDate));
+
+
+      setJobs(sortedJobs);
+    } catch (error) {
+      console.error('Error fetching filtered jobs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
 
   const handleStatusChange = async (jobId, newStatus) => {
@@ -266,7 +369,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
                             <span style={{fontSize:'15px',color:'#656060'}}>Edit</span>
                           </Link>
                           </div>
-                          <Link to="/recruiter-appliedapplicants" onClick={() => setSelectedJobId(job.id)}>
+                          <Link to="/recruiter-job-details" onClick={() => setSelectedJobId(job.id)}>
                             <button
                               type="button"
                               // style={{
@@ -276,9 +379,9 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
                               className={`button-status ${job.status === 'Inactive' ? 'disabled-button' : ''}`}
                               // disabled={job.status === 'Inactive'}
                             > 
-                              View Applicants
+                              View job details
                             </button>
-                          </Link>
+                          </Link> 
                         </div>
                       </div>
                     </div>
@@ -293,4 +396,4 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
   );  
 }
 
-export default RecruiterJobOpenings;
+export default RecruiterJobOpenings;  

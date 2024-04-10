@@ -2,9 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { apiUrl } from '../../services/ApplicantAPIService';
 import { useUserContext } from '../common/UserProvider';
-export default function ApplicantJobAlerts() {
+import { useNavigate } from 'react-router-dom';
+
+export default function ApplicantJobAlerts({ setSelectedJobId }) {
   const [jobAlerts, setJobAlerts] = useState([]);
   const { user } = useUserContext();
+  const navigate = useNavigate(); 
+
+
   useEffect(() => {
     const fetchJobAlerts = async () => {
       try {
@@ -16,12 +21,20 @@ export default function ApplicantJobAlerts() {
       }
     };
     fetchJobAlerts();
-  }, []);
+  }, [user.id]);
+  
   function formatDate(dateString) {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     const formattedDate = new Date(dateString).toLocaleDateString('en-US', options);
     return formattedDate;
   }
+
+  const handleJobAlertClick = (jobId) => {
+    setSelectedJobId(jobId); // Set the selected job ID
+    navigate('/applicant-view-job'); // Navigate to the ApplicantViewJob component
+  };
+
+
   return (
     <div className="dashboard__content">
       <section className="page-title-dashboard">
@@ -43,7 +56,7 @@ export default function ApplicantJobAlerts() {
               {jobAlerts.length > 0 ? (
                 <ul>
                   {jobAlerts.map(alert => (
-                    <li key={alert.alertsId} className='inner bg-white' style={{width:'100%',padding:'2%',borderRadius:'10px'}}>
+                    <li key={alert.alertsId}  onClick={() => handleJobAlertClick(alert.jobId)} className='inner bg-white' style={{width:'100%',padding:'2%',borderRadius:'10px'}}>
                       <a className="noti-icon"><span className="icon-bell1"></span></a>
                       <h4>Success!&nbsp; {alert.companyName} has updated the job status to {' '}
                              {alert.status} on {' '} {formatDate(alert.changeDate)}. For the role of {' '} {alert.jobTitle}.
