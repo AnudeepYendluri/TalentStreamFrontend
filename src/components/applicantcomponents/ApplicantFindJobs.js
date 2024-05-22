@@ -275,7 +275,7 @@ function ApplicantFindJobs({ setSelectedJobId }) {
         >
           Apply Now
         </button>
-      )}
+      )}    
     </li>
 </ul>
 </div>

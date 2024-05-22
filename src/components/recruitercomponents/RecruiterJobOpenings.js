@@ -162,48 +162,7 @@ function RecruiterJobOpenings({ setSelectedJobId }) {
     fetchJobs();
   }, [user.id]);
 
-  /*
-  const handleFilter = (status) => {
-    setFilter(status);  
-  };
-
-  // Filter jobs based on selected filter
-  const filteredJobs = jobs.filter(job => {
-    if (filter === 'Active') {
-      return job.status === 'Active';
-    } else if (filter === 'Inactive') {
-      return job.status === 'Inactive';
-    } else {
-      return true;
-    }
-  });  */
-
-  /*
-  const handleFilter = async (status) => {
-    setLoading(true);
-    try {
-      const jwtToken = localStorage.getItem('jwtToken');
-      if (jwtToken) {
-        axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
-      }
-  
-      let apiUrlForStatus;
-      if (status === 'All') {
-        apiUrlForStatus = `${apiUrl}/job/recruiters/viewJobs/${user.id}`;
-      } else {
-        apiUrlForStatus = `http://localhost:8081/job/${status}`;
-      }
-  
-      const response = await axios.get(apiUrlForStatus);
-      const filteredJobs = response.data;
-      setJobs(filteredJobs);
-    } catch (error) {
-      console.error('Error fetching filtered jobs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  */
+ 
  
   const handleFilter = async (status) => {
     setLoading(true);
